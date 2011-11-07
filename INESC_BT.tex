@@ -1,0 +1,128 @@
+\documentclass[10pt,journal,final,twocolumn,twoside]{IEEEtran}
+%\documentclass[11pt,journal,draftcls,onecolumn]{IEEEtran}
+%\usepackage{spconf}
+%\usepackage{subfigure}
+%\usepackage{epsfig}
+\usepackage{amsmath}
+\usepackage{amssymb}              %to augment generic LaTeX; needed for \mathbb font
+\usepackage{amsfonts}            %reading in some AMS fonts
+\usepackage{epsfig}
+\usepackage{multirow}
+\usepackage[english]{babel}
+
+% Example definitions.
+% --------------------
+\def\x{{\mathbf x}}
+\def\L{{\cal L}}
+
+
+\newcommand{\sas}{$S\alpha S$}
+\newcommand{\asg}{$\alpha$-SG({\bf R})}
+\newcommand{\argmax}{\operatornamewithlimits{argmax}}
+
+
+
+
+\begin{document}
+\title{Beyond the glass ceiling: what makes beat tracking difficult?} %!PN
+
+\author{Andr\'e Holzapfel* and Matthew Davies and Jose Zapata and Joao Oliveira and Fabien Gouyon\thanks{INESC Porto, Porto, Portugal. aholza@inescporto.pt}}
+
+
+\maketitle
+\setlength{\abovedisplayskip}{4pt}
+\setlength{\belowdisplayskip}{4pt}
+\setlength{\abovedisplayshortskip}{4pt}
+\setlength{\belowdisplayshortskip}{4pt}
+\setlength{\belowcaptionskip}{-5pt}
+\begin{abstract}
+abstract
+\end{abstract}
+
+\section{Introduction}
+Intro
+
+\section{Finding difficult songs for beat tracking}
+\subsection{Evaluation Methods}
+Describe the available measures here and give some motivation for choosing the information gain.
+\subsection{Assigning difficulty using mutual agreement}
+Describe the concept of measuring the mutual agreement between beat tracking algorithms. Explain the problem of missing ground truth. Show results on D1.
+\subsection{Choice of committee members}
+Initially, the comittee of beat trackers contains 16 algorithms, listed in Section \ref{app:BT_list}. Among these, there are algorithms which perform with different accuracies according to the evaluation measures, and are characterized by varying degrees of similarities regarding their computational approach. In order to reduce the overall time for computing the mutual agreement it is reasonable to choose a subset of the 16 beat trackers. All the algorithms in this subset should be characterized by good performance, but at the same time care should be taken to include approaches that complement each other. A similar approach was investigated by Gouyon \textit{et al.} \cite{Gouyon06Comparison} for the induction of tempo from music samples.
+
+Our method to choose the beat tracking algorithms starts with computing the mean ground truth performance $S_D(b^i,a)$ for $i \in \lbrace 1 \dots 16 \rbrace$ of the $i$-th beat tracker on the dataset D1, using the Information Gain measure. We start including the best single performing algorithm into the subset, which is the algorithm by Klapuri \textit{et al.} \cite{KlapuriIEEE06} with a mean performance of $2.237$. The next step is combining it with each other beat tracker, and obtaining the \textit{oracle} performance of each beat tracker combination. The best combination is selected, and an orcale performance vector is built that contains the oracle performance for each file. Then this oracle performance is again combined with each single beat tracker that is not yet in the subset of chosen beat trackers, and again the best combination is chosen. This procedure is iteratively continued until all beat trackers are included in the subset. We can then look at the order algorithms entered the subset, and at the performance improvement that their inclusion caused. This development is depicted in Table \ref{tab:BT_oracle}.
+
+\begin{table}[h!tb]
+\caption{Oracle performance of beat tracker combinations} \label{tab:BT_oracle}
+\begin{center}
+%{\tt \scriptsize
+\begin{tabular}{|c|c|c|c|c|c|c|c|}\hline
+KLA & DEG & IB2 & BOE & HAI & DA1 & DIX & ELL  \\ \hline
+2.237 &   2.399 &   2.470 &   2.518 &   2.553 &   2.582  &  2.599 &   2.610   \\ \hline 
+\end{tabular}
+\end{center}
+\end{table}
+%IB2: IBT non causal
+%DA2: DAVIES_STARK
+%DA1: Davies std
+
+Two observations can be made from Table \ref{tab:BT_oracle}. First, a saturation effect can be observed when the number of beat trackers in the subset increases.  Including more than five beat trackers does not lead to further significant improvement. And, secondly, the beat tracking approaches found at the beginning of the list are following indeed very different algorithmic approaches. Both regarding the number and the order of beat trackers, the results remain the same when using the F-measure or AMLt.\\
+Hence we chose to use five beat trackers in our comittee. However, we decided not to use the approaches by Boeck \cite{Boeck} and Hainsworth \cite{Hains} for reasons of portability and computation time, but included the widely available approaches by Dixon \cite{Dixon} and Ellis \cite{Ellis} instead. This lead only to a decrease in performance from $2.553$ to $2.524$, and will enable other researchers to easily reproduce results presented in this paper.
+
+
+\subsection{Building a difficult dataset}
+Describe D2 and show MMA distribution of this dataset.
+
+\section{Data annotation}
+\subsection{Perceptual difficulty ratings}
+Clarify the scale, the exact meaning of the rating, and show the distribution of the rating for the potentially difficult dataset.
+\subsection{Spontaneous Tapping}
+Give details for the spontaneous tapping protocol. Maybe give some mutual agreement measurement of the tapping already here.
+\subsection{Ground truth annotation}
+Describe the used tools, how did we exclude impossible files based on perceptual ratings, annotation of secondary beat, give the list of tags, mention cross-checking by second expert.
+\subsection{Problems encountered during the annotation process}
+
+\section{Results}
+Start with the plot of BT-MMA against MGP, and also give details about the distribution of the MGP to show the difficulty of the dataset when comparing with the annotated ground truth.
+
+Apparently, MGP is low for (hopefully) all files with low MMA. Start showing that this is only half of the work: difficulty for a beat tracker does not imply difficulty for a human listener to percieve the beat. Show a figure and discuss the los correlation between BT-MMA on one side, and the perceptual ratings and the Tapping-MMA on the other side. Show that Tapping-MMA is high for those files that were rated easy.
+
+Conclude: there are files with perceivable meter (high Tapping-MMA), where beat trackers fail. These files can be nicely spotted by plotting BT-MMA and Tapping-MMA on top of each other. Give an analysis of these files using the tags, and maybe some feature properties. These feature properties might be motivated by the tags. For example, we might see that in this area there are mainly files with soft onsets, but no expressive timing. We might think about descriptors for that and try to separate the two groups of files.  
+
+Compare causal beat trackers with spontaneous tappings: how close are causal beat trackers to human performance for difficult files? Giva an analysis of the relations between the individual tappers as well, are there systematic differences between the tappers?
+
+
+\section{Conclusion}
+Dataset will be made available.
+\appendix{List of used beat tracking algorithms}
+\label{app:BT_list}
+\appendix{Performance of beat trackers on datasets}
+
+
+
+
+%\begin{figure}[htb]
+%\begin{center}
+%\includegraphics[width=\columnwidth]{../figures/ALL_AC_BW_4.pdf}
+%\end{center}
+%\caption{Scale Bandwidth for different maximum lags $T_{up}$ of the autocorrelations}
+%\label{fig:scale_bw}
+%\end{figure} 
+
+
+
+
+%\clearpage
+%%%%%%%%%%%%%%%%% BIBLIOGRAPHY IN THE LaTeX file !!!!! %%%%%%%%%%%%%%%%%%%%%%%%
+%% This is nothing else than the IEEEsample.bbl file that you would         
+%%
+%% obtain with BibTeX: you do not need to send around the *.bbl file        
+%%
+%%---------------------------------------------------------------------------%%
+%
+\bibliographystyle{IEEEbib}
+\bibliography{/home/hannover/Documents/verzeichnis}
+%\listoffigures
+%\listoftables
+
+\end{document}
